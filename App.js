@@ -1,21 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, Button } from "react-native";
+import { EndScreen } from "./components/EndScreen";
+import { PlayScreen } from "./components/PlayScreen";
+import StartScreen from "./components/StartScreen";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  const GAME_START_MESSAGE = "Guess a Number Game";
+  // counter for switching btw components
+  const [counter, setCounter] = useState(GAME_START_MESSAGE);
+  // random number
+  const RANDOM_NUMBER = Math.floor(Math.random() * 1000) + 1;
+  // stats of game : round, score, input
+  const [stats, setStats] = useState({
+    round: 1,
+    score: 0,
+    input: 0
+  });
+
+  const screenSwitching = () => {
+    if (counter === GAME_START_MESSAGE)
+      return <StartScreen LetsBegin={() => setCounter(-1)} />;
+    else if (counter === -2)
+      return (
+        <EndScreen
+          setCounter={setCounter}
+          GAME_START_MESSAGE={GAME_START_MESSAGE}
+          stats={stats}
+          setStats={setStats}
+        />
+      );
+    else
+      return (
+        <PlayScreen
+          setCounter={setCounter}
+          RANDOM_NUMBER={RANDOM_NUMBER}
+          stats={stats}
+          setStats={setStats}
+        />
+      );
+  };
+  // switch btw screens
+  return <View style={styles.container}>{screenSwitching()}</View>;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: "center",
+    backgroundColor: "#ecf0f1",
+    padding: 10
+  }
 });
